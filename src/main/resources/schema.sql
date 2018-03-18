@@ -13,12 +13,17 @@ CREATE TABLE empleado (
 DROP TABLE IF EXISTS llamada;
 CREATE TABLE llamada (
     id bigint auto_increment primary key,
-    duracion bigint(20) NOT NULL,
-    estado varchar(255) NOT NULL,
-    empleado_id bigint(20) unsigned DEFAULT NULL
+    estado varchar(255) NOT NULL
 );
 
-ALTER TABLE llamada ADD FOREIGN KEY (empleado_id) REFERENCES empleado(id);
-
-insert into empleado (email,estado,cargo) values ('davidarce@gmail.com','DISPONIBLE','OPERADOR');
-insert into llamada (duracion,estado) values (6,'EN_PROGRESO');
+DROP TABLE IF EXISTS `llamada_empleado`;
+CREATE TABLE `llamada_empleado` (
+  `id` bigint auto_increment,
+  `empleado_id` int(10) unsigned NOT NULL,
+  `llamada_id` int(10) unsigned NOT NULL,
+  `duracion` bigint unsigned NOT NULL,
+  `fecha`date not null,
+  PRIMARY KEY (`empleado_id`,`llamada_id`),
+  FOREIGN KEY (`empleado_id`) references `empleado` (`id`),
+  FOREIGN KEY (`llamada_id`) references `llamada` (`id`)
+);

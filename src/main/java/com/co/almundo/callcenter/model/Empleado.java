@@ -1,14 +1,20 @@
 package com.co.almundo.callcenter.model;
 
-import com.co.almundo.callcenter.util.CargoEmpleado;
-import com.co.almundo.callcenter.util.EstadoEmpleado;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.*;
-
-
+/**
+ * Entidad que representa un empleado
+ * en el call center
+ * @author Oscar David Arce <davidarce2915@gmail.com>
+ *
+ */
 @Entity
 @Table(name = "empleado", schema="SPRING_DATA_JPA_EXAMPLE")
 public class Empleado {
@@ -26,11 +32,6 @@ public class Empleado {
 	@Enumerated(EnumType.STRING)
 	private CargoEmpleado cargo;
 	
-	@OneToMany(cascade = CascadeType.ALL,
-	            fetch = FetchType.LAZY,
-	            mappedBy = "empleado")
-	private Set<Llamada> llamadas = new HashSet<>();
-	
 	public Empleado(){
 		
 	}
@@ -39,6 +40,11 @@ public class Empleado {
 		this.estado = estado;
 		this.cargo = cargo;
 	}
+	
+	/*
+	 * getters and setters
+	 */
+	
 	public Long getId() {
 		return id;
 	}
@@ -57,24 +63,17 @@ public class Empleado {
 	public EstadoEmpleado getEstado() {
 		return estado;
 	}
+	
 	public void setEstado(EstadoEmpleado estado) {
 		this.estado = estado;
 	}
+	
 	public CargoEmpleado getCargo() {
 		return cargo;
 	}
+	
 	public void setCargo(CargoEmpleado cargo) {
 		this.cargo = cargo;
-	}
-
-	public Set<Llamada> getLlamadas() {
-		return llamadas;
-	}
-
-	public void setllamadas(Set<Llamada> llamadas) {
-		this.llamadas = llamadas;
-	}
-	
-	
+	}	
 
 }

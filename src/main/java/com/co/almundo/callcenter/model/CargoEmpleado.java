@@ -1,4 +1,4 @@
-package com.co.almundo.callcenter.util;
+package com.co.almundo.callcenter.model;
 
 public enum CargoEmpleado {
 
