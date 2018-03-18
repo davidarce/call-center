@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import com.co.almundo.callcenter.util.EstadoLlamada;
 
 @Entity
-@Table(name = "empleado", schema="SPRING_DATA_JPA_EXAMPLE")
+@Table(name = "llamada", schema="SPRING_DATA_JPA_EXAMPLE")
 public class Llamada {
 	
 	@Id
@@ -31,6 +31,10 @@ public class Llamada {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "empleado_id")
 	private Empleado empleado;
+	
+	public void llamada() {
+		
+	}
 	
 	public Llamada() {
 		this.estado = EstadoLlamada.EN_PROGRESO;

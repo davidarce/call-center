@@ -3,6 +3,7 @@ package com.co.almundo.callcenter.model;
 import com.co.almundo.callcenter.util.CargoEmpleado;
 import com.co.almundo.callcenter.util.EstadoEmpleado;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -17,14 +18,18 @@ public class Empleado {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	
+	private String email;
+	
 	@Enumerated(EnumType.STRING)
 	private EstadoEmpleado estado;
 	
 	@Enumerated(EnumType.STRING)
 	private CargoEmpleado cargo;
 	
-	@OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
-	private Set<Llamada> llamadas;
+	@OneToMany(cascade = CascadeType.ALL,
+	            fetch = FetchType.LAZY,
+	            mappedBy = "empleado")
+	private Set<Llamada> llamadas = new HashSet<>();
 	
 	public Empleado(){
 		
@@ -40,6 +45,15 @@ public class Empleado {
 	public void setId(Long id) {
 		this.id = id;
 	}
+		
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public EstadoEmpleado getEstado() {
 		return estado;
 	}
