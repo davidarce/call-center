@@ -22,7 +22,7 @@ public class GeneradorLLamada {
 	/**
 	 * Metodo que genera una llamada cada n tiempo configurado
 	 */
-	@Scheduled(fixedDelay = 1000, initialDelay = 2000)
+	@Scheduled(fixedDelay = 500)
     public void generarLLamada() {
 		LOGGER.debug("....GENERANDO LLAMADA....");
 		Llamada llamada = new Llamada();

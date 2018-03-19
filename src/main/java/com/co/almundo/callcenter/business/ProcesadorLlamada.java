@@ -49,27 +49,28 @@ public class ProcesadorLlamada implements Runnable{
 			 * Actualiza llamada a EN_PROGRESO
 			 * Calcula la duracion de la llamada
 			 */
-			LOGGER.debug("LLAMADA ASIGNADA A EMPLEADO email: " + llamadaEmpleado.getEmpleado().getEmail());
+			Long idLlamada = llamadaActual.getId();
+			LOGGER.debug("LLAMADA ID: " + idLlamada + " ASIGNADA A EMPLEADO email: " + llamadaEmpleado.getEmpleado().getEmail());
 			empleado.setEstado(EstadoEmpleado.OCUPADO);
 			checkAsyncService.updateEstadoEmpleado(empleado);
 			
-			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... EN PROGRESO");
+			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + idLlamada + "... EN PROGRESO");
 			llamadaActual.setEstado(EstadoLlamada.EN_PROGRESO);
 			checkAsyncService.updateEstadoLlamada(llamadaActual);
 
 			//Se simula el tiempo de la llamada en el proceso
 			Thread.sleep(llamadaEmpleado.getDuracion() * Constants.MILISECONDS);
-			LOGGER.debug("REGISTRANDO LLAMADA_EMPLEADO: " + llamadaActual.getId());
+			LOGGER.debug("REGISTRANDO LLAMADA_EMPLEADO: " + idLlamada);
 			checkAsyncService.registrarLlamadaEmpleado(llamadaEmpleado);
 
 			/*
 			 * Actualiza el estado de la llamada a FINALIZADA
 			 */
-			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... FINALIZADA");
+			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + idLlamada + "... FINALIZADA");
 			llamadaActual.setEstado(EstadoLlamada.FINALIZADA);
 			checkAsyncService.updateEstadoLlamada(llamadaEmpleado.getLlamada());
 			
-			LOGGER.debug("LLAMADA FINALIZADA EMPLEADO email: " + empleado.getEmail());
+			LOGGER.debug("LLAMADA ID: " +idLlamada + " FINALIZADA EMPLEADO email: " + empleado.getEmail());
 			empleado.setEstado(EstadoEmpleado.DISPONIBLE);
 			checkAsyncService.updateEstadoEmpleado(empleado);
 			applicationEventPublisher.publishEvent(new MessageEvent(this, empleado));

@@ -78,10 +78,12 @@ public class DispatcherTest {
 		encolarLlamadas(10);
 		
 		//act
+		dispatcher.setRunning(true);
 		executor.execute(dispatcher);
 		
 		//assert
 		Thread.sleep(10000);
+		dispatcher.setRunning(false);
 		Assert.assertTrue(LlamadaQueue.sizeQueue() == Constants.CERO);
 		
 	}

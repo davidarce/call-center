@@ -27,6 +27,7 @@ public class CallCenterApplication implements CommandLineRunner{
 	
     @Override
     public void run(String... args) throws Exception {
+    		dispatcher.setRunning(true);
     		dispatcher.run();
     }
 	

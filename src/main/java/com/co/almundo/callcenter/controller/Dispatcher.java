@@ -33,8 +33,12 @@ import com.co.almundo.callcenter.util.MessageEvent;
 public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Dispatcher.class);
+	
 	private Random random = new Random();
+	
 	private List<Empleado> empleadosDisponibles;
+	
+	private boolean running;
 	
 	@Autowired
     EmpleadoRepository empleadoRepository;
@@ -55,7 +59,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 		//Se almance la llamadaen BD para llevar un registro de estas
 		LOGGER.debug("---RECIBIENDO LLAMADA---");
 		llamadaRepository.save(llamada);
-		LOGGER.debug("---LLAMADA CON ID:" + llamada.getId() + " ALMACENADA---");
+		LOGGER.debug("---LLAMADA ID:" + llamada.getId() + " ALMACENADA---");
 		
 		//Se calcula la duracion de la llamada en un rango de 5 a 10 segundos
 		Long duracion = (long) (Constants.RANGO_LLAMADA + random.nextInt(Constants.RANGO_LLAMADA));
@@ -77,7 +81,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 		Empleado empleadoDisponible = null;
 		Llamada llamada = null;
 		
-		while (LlamadaQueue.sizeQueue() > Constants.CERO) {
+		while (running) {
 			try {
 				//Se valida si hay empleados disponibles para recibir llamadas
 				if(!empleadosDisponibles.isEmpty()) {
@@ -171,6 +175,14 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	public void onApplicationEvent(MessageEvent event) {
 		this.empleadosDisponibles.add(event.getEmpleado());
 		
+	}
+	
+	/*
+	 * para propositos de test
+	 */
+
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 
 }
