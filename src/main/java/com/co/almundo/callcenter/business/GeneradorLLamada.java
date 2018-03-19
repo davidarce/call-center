@@ -1,4 +1,4 @@
-package com.co.almundo.callcenter;
+package com.co.almundo.callcenter.business;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +24,11 @@ public class GeneradorLLamada {
 	 */
 	@Scheduled(fixedDelay = 1000, initialDelay = 2000)
     public void generarLLamada() {
-		LOGGER.info("....GENERANDO LLAMADA....");
+		LOGGER.debug("....GENERANDO LLAMADA....");
 		Llamada llamada = new Llamada();
 		LlamadaQueue.encolarLlamada(llamada);
-		LOGGER.info("....LLAMADA ENCOLADA....");
-		LOGGER.info("LLAMADAS EN ESPERA: " + LlamadaQueue.sizeQueue());
+		LOGGER.debug("....LLAMADA ENCOLADA....");
+		LOGGER.debug("LLAMADAS EN ESPERA: " + LlamadaQueue.sizeQueue());
 		
     }
 }

@@ -1,4 +1,4 @@
-package com.co.almundo.callcenter;
+package com.co.almundo.callcenter.business;
 
 import java.util.LinkedList;
 import java.util.Queue;

@@ -1,4 +1,4 @@
-package com.co.almundo.callcenter;
+package com.co.almundo.callcenter.business;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,27 +49,27 @@ public class ProcesadorLlamada implements Runnable{
 			 * Actualiza llamada a EN_PROGRESO
 			 * Calcula la duracion de la llamada
 			 */
-			LOGGER.info("LLAMADA ASIGNADA A EMPLEADO email: " + llamadaEmpleado.getEmpleado().getEmail());
+			LOGGER.debug("LLAMADA ASIGNADA A EMPLEADO email: " + llamadaEmpleado.getEmpleado().getEmail());
 			empleado.setEstado(EstadoEmpleado.OCUPADO);
 			checkAsyncService.updateEstadoEmpleado(empleado);
 			
-			LOGGER.info("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... EN PROGRESO");
+			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... EN PROGRESO");
 			llamadaActual.setEstado(EstadoLlamada.EN_PROGRESO);
 			checkAsyncService.updateEstadoLlamada(llamadaActual);
 
 			//Se simula el tiempo de la llamada en el proceso
 			Thread.sleep(llamadaEmpleado.getDuracion() * Constants.MILISECONDS);
-			LOGGER.info("REGISTRANDO LLAMADA_EMPLEADO: " + llamadaActual.getId());
+			LOGGER.debug("REGISTRANDO LLAMADA_EMPLEADO: " + llamadaActual.getId());
 			checkAsyncService.registrarLlamadaEmpleado(llamadaEmpleado);
 
 			/*
 			 * Actualiza el estado de la llamada a FINALIZADA
 			 */
-			LOGGER.info("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... FINALIZADA");
+			LOGGER.debug("ACTUALIZANDO LLAMADA ID: " + llamadaActual.getId() + "... FINALIZADA");
 			llamadaActual.setEstado(EstadoLlamada.FINALIZADA);
 			checkAsyncService.updateEstadoLlamada(llamadaEmpleado.getLlamada());
 			
-			LOGGER.info("LLAMADA FINALIZADA EMPLEADO email: " + empleado.getEmail());
+			LOGGER.debug("LLAMADA FINALIZADA EMPLEADO email: " + empleado.getEmail());
 			empleado.setEstado(EstadoEmpleado.DISPONIBLE);
 			checkAsyncService.updateEstadoEmpleado(empleado);
 			applicationEventPublisher.publishEvent(new MessageEvent(this, empleado));

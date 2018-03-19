@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
-import com.co.almundo.callcenter.ProcesadorLlamada;
+import com.co.almundo.callcenter.business.ProcesadorLlamada;
 import com.co.almundo.callcenter.model.Empleado;
 import com.co.almundo.callcenter.model.Llamada;
 import com.co.almundo.callcenter.model.LlamadaEmpleado;

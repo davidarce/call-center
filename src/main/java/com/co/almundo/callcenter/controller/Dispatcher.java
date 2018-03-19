@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import com.co.almundo.callcenter.LlamadaQueue;
+import com.co.almundo.callcenter.business.LlamadaQueue;
 import com.co.almundo.callcenter.model.CargoEmpleado;
 import com.co.almundo.callcenter.model.Empleado;
 import com.co.almundo.callcenter.model.Llamada;
@@ -34,7 +34,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Dispatcher.class);
 	private Random random = new Random();
-	private List<Empleado> empleadoDisponibles;
+	private List<Empleado> empleadosDisponibles;
 	
 	@Autowired
     EmpleadoRepository empleadoRepository;
@@ -53,9 +53,9 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	 */
 	public void dispatchCall(Empleado empleado, Llamada llamada){
 		//Se almance la llamadaen BD para llevar un registro de estas
-		LOGGER.info("---RECIBIENDO LLAMADA---");
-		llamada.setId(llamadaRepository.save(llamada).getId());
-		LOGGER.info("---LLAMADA CON ID:" + llamada.getId() + " ALMACENADA---");
+		LOGGER.debug("---RECIBIENDO LLAMADA---");
+		llamadaRepository.save(llamada);
+		LOGGER.debug("---LLAMADA CON ID:" + llamada.getId() + " ALMACENADA---");
 		
 		//Se calcula la duracion de la llamada en un rango de 5 a 10 segundos
 		Long duracion = (long) (Constants.RANGO_LLAMADA + random.nextInt(Constants.RANGO_LLAMADA));
@@ -64,7 +64,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 		LlamadaEmpleado llamadaEmpleado = new LlamadaEmpleado(empleado, llamada, duracion);
 		callCenterService.procesarLlamada(llamadaEmpleado);
 		
-		LOGGER.info("---EMPLEADOS DISPONIBLES---" + empleadoDisponibles.size());
+		LOGGER.debug("---EMPLEADOS DISPONIBLES---" + empleadosDisponibles.size());
 	}
 
 	/**
@@ -77,10 +77,10 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 		Empleado empleadoDisponible = null;
 		Llamada llamada = null;
 		
-		while (true) {
+		while (LlamadaQueue.sizeQueue() > Constants.CERO) {
 			try {
 				//Se valida si hay empleados disponibles para recibir llamadas
-				if(!empleadoDisponibles.isEmpty()) {
+				if(!empleadosDisponibles.isEmpty()) {
 					llamada = LlamadaQueue.recibirLlamada();
 					if(llamada != null) {
 						empleadoDisponible = buscarEmpleadoDisponible();
@@ -89,7 +89,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 					}					
 				}else {
 					//En caso de no encontrar empleados disponinles se encolan las llamadas en estado de espera
-					LOGGER.info("---NO HAY EMPLEADOS DISPONIBLES, ESPERE UN MOMENTO---");
+					LOGGER.debug("---NO HAY EMPLEADOS DISPONIBLES, ESPERE UN MOMENTO---");
 					Thread.sleep(2000);
 				}
 			} catch (InterruptedException e) {
@@ -103,7 +103,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	 * @return List<Empleado>, lista de empleados disponibles
 	 */
 	private void listarEmpleados(){
-		empleadoDisponibles = Collections.synchronizedList(empleadoRepository.listarEmpleadosDisponibles());
+		empleadosDisponibles = Collections.synchronizedList(empleadoRepository.listarEmpleadosDisponibles());
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 
 		if(operadores != null && !operadores.isEmpty()){
 			empleado = operadores.get(0);
-			this.empleadoDisponibles.remove(empleado);
+			this.empleadosDisponibles.remove(empleado);
 			log(empleado);
 		}else {
 			LOGGER.info("operadores no disponibles, buscando SUPERVISOR");
@@ -128,7 +128,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 			
 			if(supervisores != null && !supervisores.isEmpty()) {
 				empleado = supervisores.get(0);
-				this.empleadoDisponibles.remove(empleado);
+				this.empleadosDisponibles.remove(empleado);
 				log(empleado);
 			}else {
 				LOGGER.info("supervisores no disponibles, buscando DIRECTOR");
@@ -137,7 +137,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 				
 				if(directores != null && !directores.isEmpty()) {
 					empleado = directores.get(0);
-					this.empleadoDisponibles.remove(empleado);
+					this.empleadosDisponibles.remove(empleado);
 					log(empleado);
 				}
 			}
@@ -150,7 +150,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	 * Metodo encargado de filtrar la lista de emplados segun su cargo
 	 */
 	private List<Empleado> filtrarEmpleadoPorCargo(CargoEmpleado cargo) {
-		return this.empleadoDisponibles.stream().filter(
+		return this.empleadosDisponibles.stream().filter(
 				employee -> (employee.getCargo().equals(cargo))).collect(Collectors.toList());
 	}
 	
@@ -159,7 +159,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	 */
 	private void log(Empleado empleado) {
 		LOGGER.info("empleado encontrado con ID: "+empleado.getId()+" cargo: "+empleado.getCargo() + ""
-				+ " employees availables: "+ this.empleadoDisponibles.size());
+				+ " employees availables: "+ this.empleadosDisponibles.size());
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class Dispatcher implements Runnable, ApplicationListener<MessageEvent> {
 	 */
 	@Override
 	public void onApplicationEvent(MessageEvent event) {
-		this.empleadoDisponibles.add(event.getEmpleado());
+		this.empleadosDisponibles.add(event.getEmpleado());
 		
 	}
 

@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.co.almundo.callcenter.controller.Dispatcher;
 
@@ -16,9 +14,7 @@ import com.co.almundo.callcenter.controller.Dispatcher;
  *
  */
 @SpringBootApplication
-@EnableAsync
-@EnableScheduling
-public class CallCenterApplication implements CommandLineRunner {
+public class CallCenterApplication implements CommandLineRunner{
 	
 	@Autowired
 	Dispatcher dispatcher;
